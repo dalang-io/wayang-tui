@@ -2,27 +2,42 @@
 //!
 //! Shared ratatui **component library** for the wayang HUDs — the `wayang`
 //! CLI, `wayang-fw` and `wayang-router`. One implementation of the look and
-//! feel, so the three are visually identical *by construction* instead of by
-//! copy-pasted `theme.rs` / `widgets.rs`.
+//! feel, so the products are visually identical *by construction* instead of
+//! by copy-pasted `theme.rs` / `widgets.rs`.
 //!
-//! Canonical visual spec: `wayangos/docs/TUI-UX-REVAMP.md` (§5, "Visual spec"
-//! + "Focused-pane highlight").
+//! Canonical visual spec: `wayangos/docs/TUI-UX-REVAMP.md` §5 ("Visual spec" +
+//! "Focused-pane highlight").
 //!
-//! ## Status
+//! ## Modules
 //!
-//! Scaffold. Components are extracted from `wayang-fw`/`wayang-router` once
-//! their UX wave lands. Planned modules:
+//! * [`theme`] — [`Theme::resolve`](theme::Theme::resolve): the neon/ansi/mono
+//!   palette (exact spec RGBs), the glyph set, and the per-product
+//!   [`App`](theme::App) identity (`WAYANG_FW_COLOR`, logo word, …).
+//! * [`widgets`] — [`panel`](widgets::panel) /
+//!   [`panel_focused`](widgets::panel_focused), [`caption`](widgets::caption),
+//!   [`keycaps`](widgets::keycaps), [`header`](widgets::header),
+//!   [`footer`](widgets::footer), [`selection_row`](widgets::selection_row),
+//!   [`badge`](widgets::badge), [`status`](widgets::status),
+//!   [`gauge`](widgets::gauge), [`field`](widgets::field),
+//!   [`logo`](widgets::logo), [`clip`](widgets::clip),
+//!   [`centered`](widgets::centered).
+//! * [`focus`] — the focused-pane model ([`Focus`](focus::Focus),
+//!   [`FocusRing`](focus::FocusRing)) and the colour-free `▸`/`>` marker rule.
+//! * [`overlay`] — the shared help / REVIEW / quick-jump frame.
 //!
-//! * [`theme`]  — `Palette`, `Ui` (neon / ansi / mono / light, `NO_COLOR`,
-//!   `--plain`, width thresholds).
-//! * [`widgets`] — `panel(title, focused, right)`, `caption`, `keycaps`,
-//!   `header`, `footer`, `selection_row`, `badge`, `status`, `gauge`, `field`,
-//!   `logo`, `clip`, `centered`.
-//! * `focus`   — the active-pane model and the colour-free `▸`/dim rule.
-//! * `overlay` — the help / review / quick-jump frames shared by all three.
+//! ## Wiring a product
+//!
+//! ```no_run
+//! use wayang_tui::theme::{Flags, Theme, WAYANG_FW};
+//!
+//! let theme = Theme::resolve(WAYANG_FW, Flags::default());
+//! ```
+//!
+//! The product parses `--plain` / `--light` / `--mono` / `--transparent` into
+//! [`Flags`](theme::Flags); everything else comes from the environment (see
+//! the [`theme`] module docs for precedence).
 
-/// Theme: palette + rendering mode (neon / ansi / mono / light).
-pub mod theme {}
-
-/// Widgets: the bracket panels and building blocks.
-pub mod widgets {}
+pub mod focus;
+pub mod overlay;
+pub mod theme;
+pub mod widgets;
