@@ -4,11 +4,11 @@
 //! Every widget takes a [`Theme`] (product identity + palette + glyphs), so a
 //! product's `App` is the only per-product wiring.
 
+use ratatui::Frame;
 use ratatui::layout::{Alignment, Constraint, Layout, Rect};
 use ratatui::style::{Color, Modifier, Style};
 use ratatui::text::{Line, Span};
 use ratatui::widgets::{Block, Borders, Paragraph};
-use ratatui::Frame;
 
 use crate::focus::Focus;
 use crate::theme::Theme;
@@ -183,16 +183,17 @@ fn draw_panel(
     let inner = block.inner(area);
     f.render_widget(block, area);
 
-    if let Some([tl, tr, bl, br]) = ui.corners() {
-        if area.width >= 2 && area.height >= 2 {
-            let (x0, y0) = (area.x, area.y);
-            let (x1, y1) = (area.right() - 1, area.bottom() - 1);
-            let style = p.fg(p.accent);
-            let buf = f.buffer_mut();
-            for (x, y, sym) in [(x0, y0, tl), (x1, y0, tr), (x0, y1, bl), (x1, y1, br)] {
-                if let Some(cell) = buf.cell_mut((x, y)) {
-                    cell.set_symbol(sym).set_style(style);
-                }
+    if let Some([tl, tr, bl, br]) = ui.corners()
+        && area.width >= 2
+        && area.height >= 2
+    {
+        let (x0, y0) = (area.x, area.y);
+        let (x1, y1) = (area.right() - 1, area.bottom() - 1);
+        let style = p.fg(p.accent);
+        let buf = f.buffer_mut();
+        for (x, y, sym) in [(x0, y0, tl), (x1, y0, tr), (x0, y1, bl), (x1, y1, br)] {
+            if let Some(cell) = buf.cell_mut((x, y)) {
+                cell.set_symbol(sym).set_style(style);
             }
         }
     }
@@ -537,9 +538,11 @@ mod tests {
             false,
             Some("ansi"),
         );
-        assert!(caption("ACTIONS", 20, &plain)
-            .to_string()
-            .starts_with("-- ACTIONS -"));
+        assert!(
+            caption("ACTIONS", 20, &plain)
+                .to_string()
+                .starts_with("-- ACTIONS -")
+        );
     }
 
     #[test]

@@ -10,21 +10,17 @@
 //! It never blocks: the caller draws it, then samples, then replaces it. The
 //! same call frames a return from a child tool (see [`crate::transition`]).
 
+use ratatui::Frame;
 use ratatui::layout::{Alignment, Rect};
 use ratatui::text::{Line, Span};
 use ratatui::widgets::Paragraph;
-use ratatui::Frame;
 
 use crate::theme::Theme;
 use crate::widgets::centered;
 
 /// The loading ellipsis for the active glyph set.
 fn ellipsis(theme: &Theme) -> &'static str {
-    if theme.is_plain() {
-        "..."
-    } else {
-        "…"
-    }
+    if theme.is_plain() { "..." } else { "…" }
 }
 
 /// Draw the splash into `area`.

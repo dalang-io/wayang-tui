@@ -10,10 +10,10 @@
 //! Draw it with [`render`]; the line is vertically centred and cheap (one
 //! `Paragraph`), so it can be shown immediately before spawning.
 
+use ratatui::Frame;
 use ratatui::layout::{Alignment, Rect};
 use ratatui::text::{Line, Span};
 use ratatui::widgets::Paragraph;
-use ratatui::Frame;
 
 use crate::theme::Theme;
 use crate::widgets::centered;

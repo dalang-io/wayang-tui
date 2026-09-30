@@ -31,9 +31,9 @@ use std::io::{self, Write};
 use std::ops::{Deref, DerefMut};
 use std::process::{Child, Command, Output, Stdio};
 
+use ratatui::Terminal;
 use ratatui::backend::Backend;
 use ratatui::style::Color;
-use ratatui::Terminal;
 
 use crate::theme::Palette;
 
@@ -403,7 +403,9 @@ mod tests {
         }
         assert_eq!(
             String::from_utf8_lossy(&buf),
-            format!("\x1b]11;rgb:0a/0e/14\x1b\\{ENTER_ALT}{HIDE_CURSOR}{SHOW_CURSOR}{LEAVE_ALT}{OSC11_RESET}")
+            format!(
+                "\x1b]11;rgb:0a/0e/14\x1b\\{ENTER_ALT}{HIDE_CURSOR}{SHOW_CURSOR}{LEAVE_ALT}{OSC11_RESET}"
+            )
         );
     }
 

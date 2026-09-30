@@ -18,9 +18,9 @@
 //! # }
 //! ```
 
+use ratatui::Frame;
 use ratatui::layout::{Constraint, Layout, Rect};
 use ratatui::widgets::Paragraph;
-use ratatui::Frame;
 
 use crate::theme::Theme;
 use crate::widgets::{centered, keycaps, panel_focused};

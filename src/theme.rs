@@ -356,11 +356,7 @@ impl Ui {
     }
 
     pub fn border(self) -> border::Set {
-        if self.plain {
-            ASCII_BORDER
-        } else {
-            HUD_BORDER
-        }
+        if self.plain { ASCII_BORDER } else { HUD_BORDER }
     }
 
     /// Heavy corner brackets drawn over the panel corners (HUD look).
@@ -370,11 +366,7 @@ impl Ui {
 
     /// Selection cursor glyph (`▶` fancy, `>` plain).
     pub fn cursor(self) -> &'static str {
-        if self.plain {
-            "> "
-        } else {
-            "▶ "
-        }
+        if self.plain { "> " } else { "▶ " }
     }
 
     /// Severity glyph, e.g. `✔` / `✖`.
@@ -392,19 +384,11 @@ impl Ui {
     }
 
     pub fn bullet(self) -> &'static str {
-        if self.plain {
-            "-"
-        } else {
-            "›"
-        }
+        if self.plain { "-" } else { "›" }
     }
 
     pub fn dot(self) -> &'static str {
-        if self.plain {
-            "|"
-        } else {
-            "·"
-        }
+        if self.plain { "|" } else { "·" }
     }
 
     /// Filled / empty gauge cells.
@@ -437,19 +421,11 @@ impl Ui {
 
     /// Breadcrumb / flow arrow (`▸` fancy, `>` plain).
     pub fn arrow(self) -> &'static str {
-        if self.plain {
-            ">"
-        } else {
-            "▸"
-        }
+        if self.plain { ">" } else { "▸" }
     }
 
     pub fn degrees(self) -> &'static str {
-        if self.plain {
-            "C"
-        } else {
-            "°C"
-        }
+        if self.plain { "C" } else { "°C" }
     }
 }
 
@@ -501,11 +477,7 @@ impl Theme {
     /// The focused-pane marker: `▸` normally; `>` in `--plain` **or mono** so
     /// focus never depends on colour. See [`crate::focus`].
     pub fn focus_mark(&self) -> &'static str {
-        if self.ui.plain {
-            ">"
-        } else {
-            "▸"
-        }
+        if self.ui.plain { ">" } else { "▸" }
     }
 
     /// The list-selection cursor: `▶` normally, `>` in `--plain`/mono.
