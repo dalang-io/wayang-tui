@@ -137,6 +137,19 @@ mod tests {
         Theme::from_env(WAYANG_FW, Flags::default(), true, None, None)
     }
 
+    fn plain() -> Theme {
+        Theme::from_env(
+            WAYANG_FW,
+            Flags {
+                plain: true,
+                ..Flags::default()
+            },
+            false,
+            Some("ansi"),
+            None,
+        )
+    }
+
     fn fancy() -> Theme {
         Theme::from_env(WAYANG_FW, Flags::default(), false, None, Some("24bit"))
     }
@@ -145,8 +158,9 @@ mod tests {
     fn marker_is_glyph_not_colour() {
         assert_eq!(Focus::Focused.marker(&fancy()), "▸");
         assert_eq!(Focus::Unfocused.marker(&fancy()), "");
-        // Mono keeps a plain `>` so focus survives with no colour.
-        assert_eq!(Focus::Focused.marker(&mono()), ">");
+        // Mono keeps `▸` too (colour-free); only `--plain` uses `>`.
+        assert_eq!(Focus::Focused.marker(&mono()), "▸");
+        assert_eq!(Focus::Focused.marker(&plain()), ">");
         assert_eq!(Focus::Focused.prefix(&fancy()), "▸ ");
         assert_eq!(Focus::Unfocused.prefix(&fancy()), "");
     }

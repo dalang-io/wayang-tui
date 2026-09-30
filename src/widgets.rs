@@ -93,11 +93,12 @@ pub fn logo(word: &str, scale: usize, theme: &Theme) -> Vec<String> {
 /// [`logo`] as styled lines: top half `accent`, bottom half `accent2`.
 pub fn logo_lines(word: &str, theme: &Theme) -> Vec<Line<'static>> {
     let rows = logo(word, 1, theme);
-    let n = rows.len();
     rows.into_iter()
         .enumerate()
         .map(|(i, row)| {
-            let color = if i < n / 2 {
+            // Row 0 is `accent`; the rest `accent2` (matches the original HUDs,
+            // including a one-row `--plain` logotype).
+            let color = if i == 0 {
                 theme.palette.accent
             } else {
                 theme.palette.accent2
@@ -152,7 +153,7 @@ fn draw_panel(
     let focused = focus.is_focused();
     let frame = if focused { p.accent } else { p.border };
     let title_style = focus.title_style(theme);
-    let chevron = if focused { p.accent2 } else { p.border };
+    let chevron = p.accent2;
     let title_line = if ui.plain {
         Line::from(Span::styled(
             format!("[ {}{title} ]", focus.prefix(theme)),
@@ -186,7 +187,7 @@ fn draw_panel(
         if area.width >= 2 && area.height >= 2 {
             let (x0, y0) = (area.x, area.y);
             let (x1, y1) = (area.right() - 1, area.bottom() - 1);
-            let style = p.fg(frame);
+            let style = p.fg(p.accent);
             let buf = f.buffer_mut();
             for (x, y, sym) in [(x0, y0, tl), (x1, y0, tr), (x0, y1, bl), (x1, y1, br)] {
                 if let Some(cell) = buf.cell_mut((x, y)) {
@@ -486,6 +487,19 @@ mod tests {
         Theme::from_env(WAYANG_FW, Flags::default(), true, None, None)
     }
 
+    fn plain() -> Theme {
+        Theme::from_env(
+            WAYANG_FW,
+            Flags {
+                plain: true,
+                ..Flags::default()
+            },
+            false,
+            Some("ansi"),
+            None,
+        )
+    }
+
     #[test]
     fn logo_has_two_rows_and_blocks() {
         let t = theme(Flags::default(), false, Some("truecolor"));
@@ -612,11 +626,14 @@ mod tests {
         let fancy = ansi();
         assert!(panel_text(&fancy, true).contains("▸ TARGET"));
         assert!(!panel_text(&fancy, false).contains('▸'));
-        // NO_COLOR: the marker is a plain `>`, so focus survives with no colour.
+        // Mono keeps the `▸` glyph (colour-free); only `--plain` uses `>`.
         let m = mono();
-        assert!(panel_text(&m, true).contains("> TARGET"));
-        assert!(!panel_text(&m, false).contains('>'));
+        assert!(panel_text(&m, true).contains("▸ TARGET"));
+        assert!(!panel_text(&m, false).contains('▸'));
         assert_ne!(panel_text(&m, true), panel_text(&m, false));
+        let pl = plain();
+        assert!(panel_text(&pl, true).contains("> TARGET"));
+        assert!(!panel_text(&pl, false).contains('>'));
     }
 
     #[test]

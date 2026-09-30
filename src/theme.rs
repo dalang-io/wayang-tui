@@ -501,7 +501,7 @@ impl Theme {
     /// The focused-pane marker: `▸` normally; `>` in `--plain` **or mono** so
     /// focus never depends on colour. See [`crate::focus`].
     pub fn focus_mark(&self) -> &'static str {
-        if self.ui.plain || self.is_mono() {
+        if self.ui.plain {
             ">"
         } else {
             "▸"
