@@ -23,15 +23,18 @@ fn ellipsis(theme: &Theme) -> &'static str {
     if theme.is_plain() { "..." } else { "…" }
 }
 
-/// Draw the splash into `area`.
+/// Draw a **full-screen** splash into `area`: a frame across the whole terminal
+/// with the brand logotype (scaled to the terminal height) centred inside, the
+/// `loading <tool>…` spinner and the breadcrumb.
 ///
 /// * `tool` — the tool being started (`"wayang-fw"`), shown as `loading <tool>…`;
-/// * `subtitle` — optional context line (e.g. `FIREWALL SYSTEM`);
+/// * `subtitle` — optional context line (e.g. `FIREWALL SYSTEM`), shown as the
+///   panel's right title;
 /// * `tick` — the animation tick; selected through
 ///   [`Ui::spinner`](crate::theme::Ui::spinner) so it works with `--plain`.
 ///
-/// The frame is vertically centred, so it is drawable in any size without a
-/// layout pass and before data exists.
+/// The composition is centred inside the frame, so the splash fills the screen
+/// at any size and is drawable before data exists.
 pub fn render(
     f: &mut Frame,
     area: Rect,
@@ -41,7 +44,29 @@ pub fn render(
     theme: &Theme,
 ) {
     let p = &theme.palette;
-    let mut lines = theme.logo_lines();
+    // A frame across the whole terminal: the splash owns the screen.
+    let title = theme.app.brand.to_string();
+    let right = subtitle
+        .filter(|s| !s.is_empty())
+        .map(|s| Line::from(Span::styled(s.to_string(), p.fg(p.dim))));
+    let inner = crate::widgets::panel(f, area, &title, right, false, theme);
+
+    // Scale the logotype to the height so a big terminal gets a big wordmark.
+    let scale = if inner.height >= 30 {
+        3
+    } else if inner.height >= 16 {
+        2
+    } else {
+        1
+    };
+    let mut lines: Vec<Line<'static>> = crate::widgets::logo(theme.app.brand, scale, theme)
+        .into_iter()
+        .enumerate()
+        .map(|(i, row)| {
+            let color = if i == 0 { p.accent } else { p.accent2 };
+            Line::from(Span::styled(row, p.bold(color)))
+        })
+        .collect();
     lines.push(Line::default());
     lines.push(Line::from(vec![
         Span::styled(
@@ -50,20 +75,16 @@ pub fn render(
         ),
         Span::styled(format!("loading {tool}{}", ellipsis(theme)), p.fg(p.fg)),
     ]));
-    if let Some(sub) = subtitle.filter(|s| !s.is_empty()) {
-        lines.push(Line::from(Span::styled(sub.to_string(), p.fg(p.dim))));
-    }
     lines.push(Line::default());
     lines.push(Line::from(Span::styled(
         theme.breadcrumb(&[theme.app.brand, tool]),
         p.fg(p.dim),
     )));
 
-    let rect = centered(area, area.width, lines.len() as u16);
+    let h = lines.len() as u16;
+    let rect = centered(inner, inner.width, h.min(inner.height));
     f.render_widget(
-        Paragraph::new(lines)
-            .alignment(Alignment::Center)
-            .style(p.base()),
+        Paragraph::new(lines).alignment(Alignment::Center).style(p.base()),
         rect,
     );
 }

@@ -1,6 +1,6 @@
 [package]
 name = "wayang-tui"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2024"
 rust-version = "1.98.1"
 description = "Shared ratatui component library (theme, panels, focus, overlays) for the wayang HUDs (wayang CLI, wayang-fw, wayang-router)"
