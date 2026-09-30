@@ -30,6 +30,8 @@
 //! * [`splash`] — the first-frame `loading <tool>…` renderer, drawn before any
 //!   sampling so the alternate screen is never blank (§5b).
 //! * [`transition`] — the `▸ launching <target>…` handoff frame (§5b).
+//! * [`layout`] — the §5d "one tab = one full-screen view" body split with an
+//!   optional fixed bottom DETAIL strip.
 //!
 //! ## Wiring a product
 //!
@@ -44,6 +46,7 @@
 //! the [`theme`] module docs for precedence).
 
 pub mod focus;
+pub mod layout;
 pub mod overlay;
 pub mod splash;
 pub mod term;
