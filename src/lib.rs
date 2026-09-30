@@ -6,7 +6,8 @@
 //! by copy-pasted `theme.rs` / `widgets.rs`.
 //!
 //! Canonical visual spec: `wayangos/docs/TUI-UX-REVAMP.md` §5 ("Visual spec" +
-//! "Focused-pane highlight").
+//! "Focused-pane highlight"), §5b (no-flash startup & handoff), §5c (terminal
+//! robustness) and §5d (one tab = one full-screen view).
 //!
 //! ## Modules
 //!
@@ -24,6 +25,11 @@
 //! * [`focus`] — the focused-pane model ([`Focus`](focus::Focus),
 //!   [`FocusRing`](focus::FocusRing)) and the colour-free `▸`/`>` marker rule.
 //! * [`overlay`] — the shared help / REVIEW / quick-jump frame.
+//! * [`term`] — terminal lifecycle (`TermGuard`, OSC 11 theming, spawn helper)
+//!   and the cheap `Repaint` full-redraw flag (`TUI-UX-REVAMP.md` §5b/§5c).
+//! * [`splash`] — the first-frame `loading <tool>…` renderer, drawn before any
+//!   sampling so the alternate screen is never blank (§5b).
+//! * [`transition`] — the `▸ launching <target>…` handoff frame (§5b).
 //!
 //! ## Wiring a product
 //!
@@ -39,5 +45,8 @@
 
 pub mod focus;
 pub mod overlay;
+pub mod splash;
+pub mod term;
 pub mod theme;
+pub mod transition;
 pub mod widgets;
